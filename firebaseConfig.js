@@ -1,20 +1,20 @@
-// Firebase SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+// Firebase SDK 読み込み
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// Firebaseプロジェクト設定
+// Firebase設定
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyC2F41Xbf5Yp3R0I2YamT37UlfrcYivUtU",
+  authDomain: "yuki-test-app.firebaseapp.com",
+  projectId: "yuki-test-app",
+  storageBucket: "yuki-test-app.firebasestorage.app",
+  messagingSenderId: "351350635629",
+  appId: "1:351350635629:web:1ebaf0048dcbe7f0bbd364"
 };
 
 // 初期化
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 他のファイルでも使えるようにエクスポート
+// 他のファイルで使えるようにエクスポート
 export { db };
