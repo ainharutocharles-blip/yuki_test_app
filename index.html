@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>タスク管理アプリ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- ReactとReactDOM -->
+
+  <!-- Firebase（non-module / グローバル） -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- React (CDN) & Babel for JSX in browser (簡易開発用) -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <!-- Babel：JSX変換用 -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
-  <!-- Firebase初期化 -->
-  <script type="text/javascript" src="firebaseConfig.js"></script>
-  <!-- Reactアプリ -->
+
+  <!-- Firebase 設定（あなたのプロジェクト情報を入れる） -->
+  <script src="firebaseConfig.js"></script>
+
+  <!-- React アプリ（簡易版） -->
   <script type="text/babel" src="app.js"></script>
 </body>
 </html>
