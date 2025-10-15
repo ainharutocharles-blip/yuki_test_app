@@ -77,29 +77,3 @@ function App() {
 }
 
 root.render(<App />);
-
-// === AI呼び出し関数 ===
-// Hugging Face推論APIを使ってAI提案を取得
-async function getAiSuggestion(prompt) {
-  const token = "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"; // ←さっき取得したトークン
-
-  const res = await fetch("https://api-inference.huggingface.co/models/elyza/ELYZA-japanese-Llama-2-7b-instruct", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ inputs: prompt })
-  });
-
-  const data = await res.json();
-  console.log("AI response:", data);
-  if (Array.isArray(data) && data[0]?.generated_text) {
-    return data[0].generated_text;
-  } else if (data?.generated_text) {
-    return data.generated_text;
-  } else {
-    return "AI応答を取得できませんでした。";
-  }
-}
-
