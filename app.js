@@ -76,4 +76,21 @@ function App() {
   );
 }
 
+// ブラウザ側から Vercel Function を叩く
+async function getAiSuggestion(prompt) {
+  try {
+    const res = await fetch("/api/hugo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    return data.result;
+  } catch (err) {
+    console.error("AI fetch error:", err);
+    return "AI応答を取得できませんでした。";
+  }
+}
+
 root.render(<App />);
+
