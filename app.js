@@ -3,49 +3,59 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [input, setInput] = useState('');
+  const [text, setText] = useState('');
 
-  // ここではローカルストレージを利用、後でFirestoreに置き換え可能
+  // Firestoreコレクション名
+  const col = db.collection('tasks');
+
+  // マウント時にリアルタイム購読
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('tasks')) || [];
-    setTasks(stored);
+    const unsubscribe = col.orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+      const arr = [];
+      snapshot.forEach(doc => {
+        arr.push({ id: doc.id, ...doc.data() });
+      });
+      setTasks(arr);
+      console.log("Firestore snapshot:", arr);
+    }, err => {
+      console.error("Firestore onSnapshot error:", err);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const addTask = () => {
-    if (!input) return;
-    const newTasks = [...tasks, { text: input, id: Date.now() }];
-    setTasks(newTasks);
-    localStorage.setItem('tasks', JSON.stringify(newTasks));
-    setInput('');
-    if ('Notification' in window) {
-      Notification.requestPermission().then(p => {
-        if (p === 'granted') new Notification('タスク追加: ' + input);
+  // タスク追加
+  const addTask = async () => {
+    if (!text.trim()) return;
+    try {
+      await col.add({
+        text: text.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+      setText('');
+      alert("タスクを追加しました（Firestore）");
+    } catch (e) {
+      console.error("Add failed:", e);
+      alert("追加に失敗しました。コンソールを確認してください。");
     }
   };
 
-  const removeTask = (id) => {
-    const newTasks = tasks.filter(t => t.id !== id);
-    setTasks(newTasks);
-    localStorage.setItem('tasks', JSON.stringify(newTasks));
-  };
-
-  // Hugging Face AI提案（例：fetchで呼び出す想定）
-  const suggestTasks = async () => {
-    // ここにHugging Faceモデル呼び出しを追加可能
-    alert("AI提案: タスクを整理しました！（サンプル）");
+  // タスク削除
+  const removeTask = async (id) => {
+    try {
+      await col.doc(id).delete();
+    } catch(e) {
+      console.error("Delete failed:", e);
+    }
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1>タスク管理アプリ</h1>
-      <input 
-        value={input} 
-        onChange={e => setInput(e.target.value)} 
-        placeholder="タスクを入力" 
-      />
-      <button onClick={addTask}>追加</button>
-      <button onClick={suggestTasks}>AI整理</button>
+    <div style={{ padding: 20, fontFamily: 'Arial, sans-serif' }}>
+      <h2>タスク管理（Firestore接続テスト）</h2>
+      <div>
+        <input value={text} onChange={e => setText(e.target.value)} placeholder="タスクを入力" />
+        <button onClick={addTask}>追加</button>
+      </div>
       <ul>
         {tasks.map(t => (
           <li key={t.id}>
