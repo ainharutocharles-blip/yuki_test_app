@@ -1,11 +1,11 @@
 // api/hugo.js
 export default async function handler(req, res) {
-  const prompt = req.body.prompt || "タスクを整理してほしい";
-  
-  // Hugging Face トークンはここに置く
-  const token = "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"; // ←安全にサーバーに置く
-
   try {
+    const { prompt } = JSON.parse(req.body || '{}'); // ←必ずパース
+    const token = process.env.HUGGINGFACE_API_KEY; // 環境変数から取得
+
+    if (!token) throw new Error("Hugging Face APIキーが未設定です");
+
     const response = await fetch(
       "https://api-inference.huggingface.co/models/elyza/ELYZA-japanese-Llama-2-7b-instruct",
       {
@@ -19,14 +19,14 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
-    let text = "AI応答を取得できませんでした。";
-
-    if (Array.isArray(data) && data[0]?.generated_text) text = data[0].generated_text;
-    else if (data?.generated_text) text = data.generated_text;
+    const text = Array.isArray(data) && data[0]?.generated_text
+      ? data[0].generated_text
+      : data?.generated_text || "AI応答を取得できませんでした";
 
     res.status(200).json({ result: text });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "サーバーエラー" });
+    console.error("API crash:", err);
+    res.status(500).json({ error: "サーバーエラーが発生しました" });
   }
 }
