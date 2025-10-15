@@ -56,6 +56,15 @@ function App() {
         <input value={text} onChange={e => setText(e.target.value)} placeholder="タスクを入力" />
         <button onClick={addTask}>追加</button>
       </div>
+      <div style={{ marginTop: 10 }}>
+        <button onClick={async () => {
+        const suggestion = await getAiSuggestion("今日のタスク整理を手伝って。");
+        alert(suggestion);
+        }}>
+          AIに提案をもらう
+        </button>
+      </div>
+
       <ul>
         {tasks.map(t => (
           <li key={t.id}>
@@ -72,7 +81,7 @@ root.render(<App />);
 // === AI呼び出し関数 ===
 // Hugging Face推論APIを使ってAI提案を取得
 async function getAiSuggestion(prompt) {
-  const token = "hf_あなたのトークンをここに貼る"; // ←さっき取得したトークン
+  const token = "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"; // ←さっき取得したトークン
 
   const res = await fetch("https://api-inference.huggingface.co/models/elyza/ELYZA-japanese-Llama-2-7b-instruct", {
     method: "POST",
@@ -93,3 +102,4 @@ async function getAiSuggestion(prompt) {
     return "AI応答を取得できませんでした。";
   }
 }
+
